@@ -10,9 +10,9 @@ export enum BodyType {
 }
 
 export interface TCar {
-  id: string
-  modelName: string
-  bodyType: BodyType
-  modelType: ModelType
-  imageUrl: string
+  id: string;
+  modelName: string;
+  bodyType: BodyType;
+  modelType: ModelType;
+  imageUrl: string;
 }
