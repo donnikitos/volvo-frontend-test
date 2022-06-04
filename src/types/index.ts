@@ -1,12 +1,8 @@
+import { BodyType } from "../enums/body-type";
+
 export enum ModelType {
   plugInHybrid = "plug-in hybrid",
   pureElectric = "pure electric",
-}
-
-export enum BodyType {
-  suv = "suv",
-  estate = "estate",
-  sedan = "sedan",
 }
 
 export interface TCar {

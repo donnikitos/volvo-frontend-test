@@ -1,22 +1,35 @@
-import React, { FC, ReactNode, useState } from "react";
+import React, { FC, ReactNode } from "react";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import carsData from "../public/api/cars.json";
 
 import Carousel from "../src/components/Carousel";
 import CarListItem from "../src/components/CarListItem";
 import Filter from "../src/components/Filter";
-import { BodyType, TCar } from "../src/types";
+import { TCar } from "../src/types";
+import { MBodyTypes } from "../src/enums/body-type";
+import { useRouter } from "next/dist/client/router";
+import isBodyType from "../src/validators/isBodyType";
 
 const Home: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ cars }) => {
-  const [bodyTypeFilter, setBodyTypeFilter] = useState<"" | BodyType>("");
+  const { query, push } = useRouter();
+
+  const bodyTypeFilter = isBodyType(query.body) ? query.body : "";
+
   const data = cars.reduce((acc: Array<ReactNode>, car: TCar) => {
     if (!bodyTypeFilter || car.bodyType === bodyTypeFilter)
       acc.push(<CarListItem key={car.id} car={car} />);
     return acc;
   }, []);
+
   return (
     <>
-      <Filter value={bodyTypeFilter} setValue={setBodyTypeFilter} />
+      <Filter
+        options={MBodyTypes}
+        value={bodyTypeFilter}
+        setValue={(v) => {
+          push(!v ? "." : `.?body=${v}`);
+        }}
+      />
       <Carousel data={data} key={`carousel-${bodyTypeFilter}`} />
     </>
   );

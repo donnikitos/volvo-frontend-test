@@ -1,14 +1,27 @@
-import React, { FC } from "react";
+import React, { ReactNode } from "react";
 import { SelectInput, Flex, useTheme, Block } from "vcc-ui";
 
-import { BodyType } from "../types";
-
-interface Props {
-  value: BodyType | "";
-  setValue: (v: BodyType) => void;
+interface Props<T> {
+  options: Map<T, string>;
+  value: T | "";
+  setValue: (v: T | "") => void;
 }
-const Filter: FC<Props> = ({ value, setValue }) => {
+function Filter<T extends string>({
+  options: OptionsMap,
+  value,
+  setValue,
+}: Props<T>) {
   const theme = useTheme();
+
+  const options: ReactNode[] = [];
+  OptionsMap.forEach((label, value) =>
+    options.push(
+      <option key={value} value={value}>
+        {label}
+      </option>
+    )
+  );
+
   return (
     <Flex
       extend={{
@@ -20,21 +33,17 @@ const Filter: FC<Props> = ({ value, setValue }) => {
       <Block extend={{ maxWidth: "400px" }}>
         <SelectInput
           value={value}
-          onChange={({ target }: { target: { value: BodyType } }) =>
+          onChange={({ target }: { target: { value: T } }) =>
             setValue(target.value)
           }
           allowEmpty
           label="Body type"
         >
-          {Object.entries(BodyType).map(([bodyType, name]) => (
-            <option key={bodyType} value={bodyType}>
-              {name}
-            </option>
-          ))}
+          {options}
         </SelectInput>
       </Block>
     </Flex>
   );
-};
+}
 
 export default Filter;
