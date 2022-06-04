@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC } from "react";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import carsData from "../public/api/cars.json";
 
@@ -15,11 +15,9 @@ const Home: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ cars }) => {
 
   const bodyTypeFilter = isBodyType(query.body) ? query.body : "";
 
-  const data = cars.reduce((acc: Array<ReactNode>, car: TCar) => {
-    if (!bodyTypeFilter || car.bodyType === bodyTypeFilter)
-      acc.push(<CarListItem key={car.id} car={car} />);
-    return acc;
-  }, []);
+  const data = (cars as TCar[]).filter(
+    (car) => !bodyTypeFilter || car.bodyType === bodyTypeFilter
+  );
 
   return (
     <>
@@ -30,7 +28,9 @@ const Home: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ cars }) => {
           push(!v ? "." : `.?body=${v}`);
         }}
       />
-      <Carousel data={data} key={`carousel-${bodyTypeFilter}`} />
+      <Carousel data={data} key={`carousel-${bodyTypeFilter}`}>
+        {(car) => <CarListItem key={car.id} car={car} />}
+      </Carousel>
     </>
   );
 };

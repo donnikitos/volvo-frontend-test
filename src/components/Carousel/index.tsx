@@ -8,11 +8,16 @@ import CarouselArrow from "./components/CarouselArrow";
 
 const SLIDES_TO_SHOW_DEFAULT = 4;
 
-interface Props {
-  data: Array<ReactNode>;
+interface Props<T> {
+  data: Array<T>;
   slidesToShow?: number;
+  children: (data: T, index: number) => ReactNode;
 }
-function Carousel({ data, slidesToShow = SLIDES_TO_SHOW_DEFAULT }: Props) {
+function Carousel<T extends { id: string | number }>({
+  data,
+  slidesToShow = SLIDES_TO_SHOW_DEFAULT,
+  children,
+}: Props<T>) {
   const { css } = useFela();
   const theme = useTheme();
   const desktopSettings = {
@@ -77,15 +82,15 @@ function Carousel({ data, slidesToShow = SLIDES_TO_SHOW_DEFAULT }: Props) {
   return (
     <Block extend={{ paddingBottom: "60px" }}>
       <Slider {...(isMobile ? mobileSettings : desktopSettings)}>
-        {data.map((item, ind) => (
-          <Block key={ind}>
+        {data.map((item, i) => (
+          <Block key={item.id}>
             <Block
               extend={{
                 margin: "0 12px",
                 width: isMobile ? mobileItemWidth : "auto",
               }}
             >
-              {item}
+              {children(item, i)}
             </Block>
           </Block>
         ))}
