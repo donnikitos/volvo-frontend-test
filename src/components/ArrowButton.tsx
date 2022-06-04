@@ -1,6 +1,6 @@
 import { useFela } from "react-fela";
 import { Click } from "vcc-ui";
-import ArrowIcon from "../../../../docs/chevron-circled.svg";
+import ArrowIcon from "../../docs/chevron-circled.svg";
 
 const arrowStyle = {
   height: "37px",
