@@ -1,73 +1,18 @@
-import React, { FC, ReactNode, useEffect, useState } from "react";
-import { Block, Click, useTheme } from "vcc-ui";
+import React, { ReactNode, useEffect, useState } from "react";
+import { Block, useTheme } from "vcc-ui";
 import Slider from "react-slick";
 import { useFela } from "react-fela";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
-import ArrowIcon from "../../docs/chevron-circled.svg";
+import CarouselArrow from "./components/CarouselArrow";
 
 const SLIDES_TO_SHOW_DEFAULT = 4;
-
-const arrowStyle = {
-  height: "37px",
-  width: "37px",
-  position: "absolute",
-  bottom: "-50px",
-  right: "12px",
-  transition: "opacity 0.5s",
-};
-const disabledArrowStyle = {
-  opacity: 0.5,
-};
-
-interface ArrowProps {
-  currentSlide: number;
-  slideCount: number;
-  slidesToShow: number;
-}
-const setArrowDisabled = (props: ArrowProps, isNextBtn: boolean) => {
-  const isDisabled = isNextBtn
-    ? props.currentSlide === props.slideCount - props.slidesToShow
-    : props.currentSlide === 0;
-  return isDisabled ? disabledArrowStyle : {};
-};
-const PrevArrow = (props: ArrowProps) => {
-  const { css } = useFela();
-  return (
-    <Click
-      {...props}
-      className={css({
-        ...arrowStyle,
-        right: "60px",
-        transform: "rotate(180deg)",
-        ...setArrowDisabled(props, false),
-      })}
-    >
-      <ArrowIcon />
-    </Click>
-  );
-};
-const NextArrow = (props: ArrowProps) => {
-  const { css } = useFela();
-  return (
-    <Click
-      {...props}
-      className={css({ ...arrowStyle, ...setArrowDisabled(props, true) })}
-    >
-      <ArrowIcon />
-    </Click>
-  );
-};
 
 interface Props {
   data: Array<ReactNode>;
   slidesToShow?: number;
 }
-const Carousel: FC<Props> = ({
-  data,
-  slidesToShow = SLIDES_TO_SHOW_DEFAULT,
-}) => {
+function Carousel({ data, slidesToShow = SLIDES_TO_SHOW_DEFAULT }: Props) {
   const { css } = useFela();
   const theme = useTheme();
   const desktopSettings = {
@@ -75,13 +20,10 @@ const Carousel: FC<Props> = ({
     slidesToShow: slidesToShow,
     touchMove: false,
     infinite: false,
-    prevArrow: ((props) => (
-      <PrevArrow slidesToShow={slidesToShow} {...props} />
-    ))(),
-    nextArrow: ((props) => (
-      <NextArrow slidesToShow={slidesToShow} {...props} />
-    ))(),
+    prevArrow: <CarouselArrow type="prev" slidesToShow={slidesToShow} />,
+    nextArrow: <CarouselArrow type="next" slidesToShow={slidesToShow} />,
   };
+
   const mobileSettings = {
     dots: true,
     slidesToShow: 1,
@@ -115,6 +57,7 @@ const Carousel: FC<Props> = ({
   };
   const [isMobile, setIsMobile] = useState(false);
   const [mobileItemWidth, setMobileItemWidth] = useState(0);
+
   useEffect(() => {
     if (!window) return;
     function handleResize() {
@@ -130,6 +73,7 @@ const Carousel: FC<Props> = ({
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, [theme, isMobile]);
+
   return (
     <Block extend={{ paddingBottom: "60px" }}>
       <Slider {...(isMobile ? mobileSettings : desktopSettings)}>
@@ -148,6 +92,6 @@ const Carousel: FC<Props> = ({
       </Slider>
     </Block>
   );
-};
+}
 
 export default Carousel;
