@@ -60,34 +60,39 @@ function Carousel<T extends { id: string | number }>({
       },
     }),
   };
-  const [isMobile, setIsMobile] = useState(false);
+
   const [mobileItemWidth, setMobileItemWidth] = useState(0);
 
   useEffect(() => {
     if (!window) return;
+
     function handleResize() {
       const mobile = window.innerWidth < theme.breakpoint.size.large;
-      if (mobile !== isMobile) setIsMobile(mobile);
-      if (mobile)
+      if (mobile) {
         setMobileItemWidth(
           window.innerWidth *
             (window.innerWidth < theme.breakpoint.size.medium ? 0.8 : 0.4)
         );
+      } else {
+        setMobileItemWidth(0);
+      }
     }
-    window.addEventListener("resize", handleResize);
     handleResize();
+
+    window.addEventListener("resize", handleResize);
+
     return () => window.removeEventListener("resize", handleResize);
-  }, [theme, isMobile]);
+  }, [theme]);
 
   return (
     <Block extend={{ paddingBottom: "60px" }}>
-      <Slider {...(isMobile ? mobileSettings : desktopSettings)}>
+      <Slider {...(mobileItemWidth ? mobileSettings : desktopSettings)}>
         {data.map((item, i) => (
           <Block key={item.id}>
             <Block
               extend={{
                 margin: "0 12px",
-                width: isMobile ? mobileItemWidth : "auto",
+                width: mobileItemWidth || "auto",
               }}
             >
               {children(item, i)}
